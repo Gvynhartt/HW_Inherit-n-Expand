@@ -256,4 +256,76 @@ public class ProductManagerTest {
 
         Assertions.assertArrayEquals(expected, actual);
     }
+
+    @Test /** #RICH */
+    public void shdFindMatchesInSubClassBookNormal() { /** проверяет поиск в подклассе BOOK для доп. полей */
+        prodMngr.addProductToRepo(book1);
+        prodMngr.addProductToRepo(book2);
+        prodMngr.addProductToRepo(book3);
+        prodMngr.addProductToRepo(book4);
+        prodMngr.addProductToRepo(book5);
+
+        Product[] expected = {book5};
+        Product[] actual = prodMngr.searchByText("Нечаев");
+
+        Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test /** #RICH */
+    public void shdFindMatchesInSubClassBookIfNonexistent() { /** проверяет поиск в подклассе BOOK для доп. полей, если нет совпадений */
+        prodMngr.addProductToRepo(book1);
+        prodMngr.addProductToRepo(book2);
+        prodMngr.addProductToRepo(book3);
+        prodMngr.addProductToRepo(book4);
+        prodMngr.addProductToRepo(book5);
+
+        Product[] expected = {};
+        Product[] actual = prodMngr.searchByText("Барков");
+
+        Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test /** #RICH */
+    public void shdFindMatchesInSubClassPhoneNormal() { /** проверяет поиск в подклассе SMARTPHONE для доп. полей */
+        prodMngr.addProductToRepo(phone1);
+        prodMngr.addProductToRepo(phone2);
+        prodMngr.addProductToRepo(phone3);
+        prodMngr.addProductToRepo(phone4);
+        prodMngr.addProductToRepo(phone5);
+
+        Product[] expected = {phone1, phone2, phone3, phone4, phone5};
+        Product[] actual = prodMngr.searchByText("Zhui");
+
+        Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test /** #RICH */
+    public void shdFindMatchesInSubClassPhoneIfNonexistent() { /** проверяет поиск в подклассе SMARTPHONE для доп. полей, если нет совпадений */
+        prodMngr.addProductToRepo(phone1);
+        prodMngr.addProductToRepo(phone2);
+        prodMngr.addProductToRepo(phone3);
+        prodMngr.addProductToRepo(phone4);
+        prodMngr.addProductToRepo(phone5);
+
+        Product[] expected = {};
+        Product[] actual = prodMngr.searchByText("Xiaomi");
+
+        Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test /** #RICH */
+    public void shdFindMatchesAcrossSubclassesDifferentFields() { /** проверяет поиск во всех подклассах для доп. полей на разных этапах цикла */
+
+
+        Book book6 = new Book(15, "Google - the Corp of All Evil", 2077, "Гугл - корпорация зла", "Стив Джобс");
+        Smartphone phone6 = new Smartphone(16, "Pixel 100 500", 5928, "GP3450D", "Google Inc");
+
+        prodMngr.addProductToRepo(book6);
+        prodMngr.addProductToRepo(phone6);
+
+        Product[] expected = {book6, phone6};
+        Product[] actual = prodMngr.searchByText("Google");
+
+        Assertions.assertArrayEquals(expected, actual);
+    }
 }

@@ -1,3 +1,5 @@
+import java.util.Collection;
+
 public class Product {
 
     protected int prodId;
@@ -18,15 +20,12 @@ public class Product {
         return prodName;
     }
 
-    public void setProdId(int prodId) {
-        this.prodId = prodId;
-    }
-
-    public void setProdName(String prodName) {
-        this.prodName = prodName;
-    }
-
-    public void setProdPrice(int prodPrice) {
-        this.prodPrice = prodPrice;
+    public boolean matchesQuery(String queryText) { /** отдельный метод для определения соответствия prodName запросу
+     (т. к. в первой задаче он был реализован одним блоком с методом, формирующим массив из выдачи) */
+        if (getProdName().contains(queryText)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -52,7 +52,7 @@ public class ProductManager {
         int matchCount = 0;
 
         for (Product targetProd : productDatabase) {
-            if (targetProd.getProdName().contains(queryText)) {
+            if (targetProd.matchesQuery(queryText) == true) {
                 bufferDatabase[pos] = targetProd;
                 pos++;
                 matchCount++;
