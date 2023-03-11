@@ -20,7 +20,11 @@ public class ProductManagerTest {
     Product product1 = new Product(11, "Lezerman Sudnogo Dnya", 39);
     Product product2 = new Product(12, "Sonic Screwdriver", 39);
     Product product3 = new Product(13, "Konfigurator", 39);
-    Product product4 = new Product(13, "Klyuch ot kvartiry, gde den'gi lezhat", 39); /** duplicate ID */
+    Product product4 = new Product(13, "Klyuch ot kvartiry, gde den'gi lezhat", 39);
+
+    /**
+     * duplicate ID
+     */
 
     @Test
     public void shdAddBookToDB() { /** проверяет добавление объекта из разных классов */
@@ -120,22 +124,6 @@ public class ProductManagerTest {
         prodMngr.deleteFromDBbyID(13);
 
         Product[] expected = {book3, book5, phone2, phone4};
-        Product[] actual = prodMngr.returnAllProductsInDB();
-
-        Assertions.assertArrayEquals(expected, actual);
-    }
-
-    @Test
-    public void shdDeleteFromDBifNonexistentID() { /** проверяет удаление одного объекта по несуществующему ID */
-        prodMngr.addProductToRepo(book3);
-        prodMngr.addProductToRepo(book5);
-        prodMngr.addProductToRepo(phone2);
-        prodMngr.addProductToRepo(phone4);
-        prodMngr.addProductToRepo(product3);
-
-        prodMngr.deleteFromDBbyID(26);
-
-        Product[] expected = {book3, book5, phone2, phone4, product3};
         Product[] actual = prodMngr.returnAllProductsInDB();
 
         Assertions.assertArrayEquals(expected, actual);
@@ -257,7 +245,8 @@ public class ProductManagerTest {
         Assertions.assertArrayEquals(expected, actual);
     }
 
-    @Test /** #RICH */
+    @Test
+    /** #RICH */
     public void shdFindMatchesInSubClassBookNormal() { /** проверяет поиск в подклассе BOOK для доп. полей */
         prodMngr.addProductToRepo(book1);
         prodMngr.addProductToRepo(book2);
@@ -271,7 +260,8 @@ public class ProductManagerTest {
         Assertions.assertArrayEquals(expected, actual);
     }
 
-    @Test /** #RICH */
+    @Test
+    /** #RICH */
     public void shdFindMatchesInSubClassBookIfNonexistent() { /** проверяет поиск в подклассе BOOK для доп. полей, если нет совпадений */
         prodMngr.addProductToRepo(book1);
         prodMngr.addProductToRepo(book2);
@@ -285,7 +275,8 @@ public class ProductManagerTest {
         Assertions.assertArrayEquals(expected, actual);
     }
 
-    @Test /** #RICH */
+    @Test
+    /** #RICH */
     public void shdFindMatchesInSubClassPhoneNormal() { /** проверяет поиск в подклассе SMARTPHONE для доп. полей */
         prodMngr.addProductToRepo(phone1);
         prodMngr.addProductToRepo(phone2);
@@ -299,7 +290,8 @@ public class ProductManagerTest {
         Assertions.assertArrayEquals(expected, actual);
     }
 
-    @Test /** #RICH */
+    @Test
+    /** #RICH */
     public void shdFindMatchesInSubClassPhoneIfNonexistent() { /** проверяет поиск в подклассе SMARTPHONE для доп. полей, если нет совпадений */
         prodMngr.addProductToRepo(phone1);
         prodMngr.addProductToRepo(phone2);
@@ -313,7 +305,8 @@ public class ProductManagerTest {
         Assertions.assertArrayEquals(expected, actual);
     }
 
-    @Test /** #RICH */
+    @Test
+    /** #RICH */
     public void shdFindMatchesAcrossSubclassesDifferentFields() { /** проверяет поиск во всех подклассах для доп. полей на разных этапах цикла */
 
 
@@ -327,5 +320,65 @@ public class ProductManagerTest {
         Product[] actual = prodMngr.searchByText("Google");
 
         Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    /** #NOTFOUND */
+    public void shdFindInDBbyIDnormal() { /** сперва проверяем раобту "findById" с ID, имеющимся в БД */
+        prodMngr.addProductToRepo(phone1);
+        prodMngr.addProductToRepo(phone2);
+        prodMngr.addProductToRepo(phone3); /** ищем этот объект по ID 8 */
+        prodMngr.addProductToRepo(phone4);
+        prodMngr.addProductToRepo(phone5);
+
+        Product expected = phone3;
+        Product actual = prodMngr.findById(8);
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    /** #NOTFOUND */
+    public void shdFindInDBbyIDifNonexistent() { /** потом проверяем раобту "findById" с ID, которого в БД нет */
+        prodMngr.addProductToRepo(phone1);
+        prodMngr.addProductToRepo(phone2);
+        prodMngr.addProductToRepo(phone3);
+        prodMngr.addProductToRepo(phone4);
+        prodMngr.addProductToRepo(phone5);
+
+        Product expected = null;
+        Product actual = prodMngr.findById(21);
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    /** #NOTFOUND */
+    public void shdDeleteFromDBbyIDifFound() { /** проверяем работу метода после дополнения логики по позитивному сценарию */
+        prodMngr.addProductToRepo(phone1);
+        prodMngr.addProductToRepo(phone2);
+        prodMngr.addProductToRepo(phone3); /** удалем этот объект по ID 8 */
+        prodMngr.addProductToRepo(phone4);
+        prodMngr.addProductToRepo(phone5);
+        prodMngr.deleteFromDBbyID(8);
+
+        Product[] expected = {phone1, phone2, phone4, phone5};
+        Product[] actual = prodMngr.returnAllProductsInDB();
+
+        Assertions.assertArrayEquals(expected, actual); /** т. к. проверяется нормальный вариант вызова метода*/
+    }
+
+    @Test
+    /** #NOTFOUND */
+    public void shdDeleteFromDBbyIDifNotFound() { /** собственно, тестируем метод на выброс требуемого исключения */
+        prodMngr.addProductToRepo(phone1);
+        prodMngr.addProductToRepo(phone2);
+        prodMngr.addProductToRepo(phone3);
+        prodMngr.addProductToRepo(phone4);
+        prodMngr.addProductToRepo(phone5);
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            prodMngr.deleteFromDBbyID(21);
+        });
     }
 }

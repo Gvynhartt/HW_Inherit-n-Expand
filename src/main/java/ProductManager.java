@@ -20,8 +20,13 @@ public class ProductManager {
         return productDatabase;
     }
 
-    public void deleteFromDBbyID(int targetId) { /** удаляет объект продукта из репозитория по ID */
+    public void deleteFromDBbyID(int targetId) throws NotFoundException { /** удаляет объект продукта из репозитория по ID */
         Product[] productDatabase = prodRepo.getProductDatabase();
+
+        /** дополняем наш метод описанием исключительного сценария */
+        if (findById(targetId) == null) {
+            throw new NotFoundException("Объект с указанным ID (" + targetId + ") отсутствует в базе данных");
+        }
 
         int matchCount = 0;
         for (Product newProdEntry : productDatabase) {
@@ -45,7 +50,18 @@ public class ProductManager {
         prodRepo.setProductDatabase(bufferDatabase);
     }
 
-    public Product[] searchByText(String queryText) { /*** сличает запрос с полем "prodName" и группирует найденные объекты продуктов в массив */
+    public Product findById(int targetId) { /** добавленный метод поиска в БД по идентияикатору */
+        Product[] productDatabase = prodRepo.getProductDatabase();
+
+        for (Product targetProd : productDatabase) {
+            if (targetProd.getProdId() == targetId) {
+                return targetProd;
+            }
+        }
+        return null;
+    }
+
+    public Product[] searchByText(String queryText) { /** сличает запрос с полем "prodName" и группирует найденные объекты продуктов в массив */
         Product[] productDatabase = prodRepo.getProductDatabase();
         Product[] bufferDatabase = new Product[productDatabase.length];
         int pos = 0;
